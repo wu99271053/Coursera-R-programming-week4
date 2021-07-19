@@ -1,0 +1,24 @@
+# read data and manipulate the column names
+library(dplyr)
+hospitaldata<-read.csv(file.choose())
+colnames(hospitaldata)<-tolower(colnames(hospitaldata))
+measure<-read.csv(file.choose())
+colnames(measure)<-tolower(colnames(measure))
+
+# transform the dataset because the values are not numeric, 
+measure1<-transform(measure,hospital.30.day.death..mortality..rates.from.heart.failure
+                    = as.numeric(hospital.30.day.death..mortality..rates.from.heart.failure))
+measure2<-transform(measure1,hospital.30.day.death..mortality..rates.from.heart.attack
+                    = as.numeric(hospital.30.day.death..mortality..rates.from.heart.attack))
+measure3<-transform(measure2,hospital.30.day.death..mortality..rates.from.pneumonia
+                    = as.numeric(hospital.30.day.death..mortality..rates.from.pneumonia))
+                                              
+# rank hospital by mortality rate 
+best<-function(where,what){
+  a<-filter(measure3,state==where)
+  what=sub(" ",".",what) # add. to heart attack and heart failure to match the column names
+  b<-paste("hospital.30.day.death..mortality..rates.from",what,sep=".")
+  c<-arrange(a,.data[[b]])# b comes with "" so without manipulation this doesn't work.
+  
+  head(c[,2],1)
+}
